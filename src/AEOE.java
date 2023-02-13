@@ -2,10 +2,10 @@ import java.io.File;
 import java.util.*;
 
 public class AEOE {
-    public static int[][] zweiDListe = new int[EinlesenDemo.liste.toArray().length][EinlesenDemo.liste.get(0).length()];
+//    public static int[][] zweiDListe = new int[EinlesenDemo.liste.toArray().length][EinlesenDemo.liste.get(0).length()];
     public static void main(String[] args) {
         EinlesenDemo.einlesenAusgeben("src\\docs\\PlanetA-Q1_6x13.txt");
-        ziel2_aufgabe1(EinlesenDemo.liste);
+        ziel2_aufgabe3(EinlesenDemo.liste);
     }
 
     /**
@@ -15,7 +15,30 @@ public class AEOE {
      *
      * @param liste Eine ArrayList von der Ausgabe der Planeten Datei
      */
-    public static void ziel2_aufgabe1(ArrayList<String> liste){
+    public static void ziel2_aufgabe3(ArrayList<String> liste){
+        HashMap<Character, Integer> rohstoffAnzahl = new HashMap<>();
+        for (String item : liste){
+            // Erstelle 2D array
+            for (char rohstoff : item.toCharArray()){
+                // Überprüfe ob der rohstoff schon in rohstoffAnzahl als key existiert, falls ja +1
+                rohstoffAnzahl.put(rohstoff, (rohstoffAnzahl.get(rohstoff) == null) ? 1 : (rohstoffAnzahl.get(rohstoff) + 1));
+            }
+        }
+
+        for (Map.Entry<Character, Integer> item : rohstoffAnzahl.entrySet()){
+            rohstoffAnzahl = Math.round(100.0 * Double.parseDouble(String.valueOf(item.getValue())) / rohstoffAnzahl.toString().length());
+        }
+        IO.show(rohstoffAnzahl.toString());
+    }
+
+    /**
+     * Methode ziel2_aufgabe2
+     *
+     * Von der ArrayList zählen, wie viele von jedem Rohstoff existieren.
+     *
+     * @param liste Eine ArrayList von der Ausgabe der Planeten Datei
+     */
+    public static void ziel2_aufgabe2(ArrayList<String> liste){
         HashMap<Character, Integer> rohstoffAnzahl = new HashMap<>();
         for (String item : liste){
             // Erstelle 2D array
