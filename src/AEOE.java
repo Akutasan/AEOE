@@ -16,17 +16,26 @@ public class AEOE {
      * @param liste Eine ArrayList von der Ausgabe der Planeten Datei
      */
     public static void ziel2_aufgabe3(ArrayList<String> liste){
-        HashMap<Character, Integer> rohstoffAnzahl = new HashMap<>();
+        HashMap<Character, String> rohstoffAnzahl = new HashMap<>();
         for (String item : liste){
             // Erstelle 2D array
             for (char rohstoff : item.toCharArray()){
+                // Füge eine Totale Anzahl zu als ersten index
+                rohstoffAnzahl.put('t', (rohstoffAnzahl.get('t') == null) ? String.valueOf(1) : (String.valueOf(Integer.parseInt(rohstoffAnzahl.get('t')) + 1)));
                 // Überprüfe ob der rohstoff schon in rohstoffAnzahl als key existiert, falls ja +1
-                rohstoffAnzahl.put(rohstoff, (rohstoffAnzahl.get(rohstoff) == null) ? 1 : (rohstoffAnzahl.get(rohstoff) + 1));
+                rohstoffAnzahl.put(rohstoff, (rohstoffAnzahl.get(rohstoff) == null) ? String.valueOf(1) : String.valueOf(Integer.parseInt(rohstoffAnzahl.get(rohstoff)) + 1));
             }
         }
 
-        for (Map.Entry<Character, Integer> item : rohstoffAnzahl.entrySet()){
-            rohstoffAnzahl = Math.round(100.0 * Double.parseDouble(String.valueOf(item.getValue())) / rohstoffAnzahl.toString().length());
+        // Gehe durch alle items in der HashMap
+        for (Map.Entry<Character, String> item : rohstoffAnzahl.entrySet()){
+            // Checke ob der Key das Totale ist
+            if (!item.getKey().equals('t')) {
+                rohstoffAnzahl.put(item.getKey(), item.getValue() + ", " +
+                        Math.round(100.0 * Double.parseDouble(String.valueOf(Integer.parseInt(item.getValue()))) /
+                                Integer.parseInt(rohstoffAnzahl.get('t'))) + "%");
+            }
+
         }
         IO.show(rohstoffAnzahl.toString());
     }
