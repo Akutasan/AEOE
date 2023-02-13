@@ -31,6 +31,7 @@ public class AEOE {
         for (Map.Entry<Character, String> item : rohstoffAnzahl.entrySet()){
             // Checke ob der Key das Totale ist
             if (!item.getKey().equals('t')) {
+                // Ersetze die Value mit "Value + Prozentzahl von Value"
                 rohstoffAnzahl.put(item.getKey(), item.getValue() + ", " +
                         Math.round(100.0 * Double.parseDouble(String.valueOf(Integer.parseInt(item.getValue()))) /
                                 Integer.parseInt(rohstoffAnzahl.get('t'))) + "%");
