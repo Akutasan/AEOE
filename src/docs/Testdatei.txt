@@ -1,0 +1,6 @@
+Dies ist die erste Zeile der Datei.
+Dies ist die zweite Zeile der Datei.
+Dies ist die dritte Zeile der Datei.
+... vierte ...
+... fünfte ...
+Dies ist die sechste und letzte Zeile der Datei.

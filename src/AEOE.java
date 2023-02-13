@@ -1,10 +1,20 @@
-import java.util.Arrays;
+import java.io.File;
+import java.util.*;
 
 public class AEOE {
     public static void main(String[] args) {
-        ziel1_aufgabe1();
-        ziel1_aufgabe2(5);
-        ziel1_aufgabe3();
+        EinlesenDemo.einlesenAusgeben("src\\docs\\PlanetA-Q1_6x13.txt");
+        ziel2_aufgabe1(EinlesenDemo.liste);
+    }
+
+    public static void ziel2_aufgabe1(ArrayList<String> liste){
+        HashMap<Character, Integer> hashMap = new HashMap<>();
+        for (String item : liste){
+            for (char rohstoff : item.toCharArray()){
+                hashMap.put(rohstoff, (hashMap.get(rohstoff) == null) ? 1 : (hashMap.get(rohstoff) + 1));
+            }
+        }
+        System.out.println(hashMap);
     }
 
     /**
