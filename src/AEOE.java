@@ -2,19 +2,29 @@ import java.io.File;
 import java.util.*;
 
 public class AEOE {
+    public static int[][] zweiDListe = new int[EinlesenDemo.liste.toArray().length][EinlesenDemo.liste.get(0).length()];
     public static void main(String[] args) {
         EinlesenDemo.einlesenAusgeben("src\\docs\\PlanetA-Q1_6x13.txt");
         ziel2_aufgabe1(EinlesenDemo.liste);
     }
 
+    /**
+     * Methode ziel2_aufgabe1
+     *
+     * Von der ArrayList zählen, wie viele von jedem Rohstoff existieren.
+     *
+     * @param liste Eine ArrayList von der Ausgabe der Planeten Datei
+     */
     public static void ziel2_aufgabe1(ArrayList<String> liste){
-        HashMap<Character, Integer> hashMap = new HashMap<>();
+        HashMap<Character, Integer> rohstoffAnzahl = new HashMap<>();
         for (String item : liste){
+            // Erstelle 2D array
             for (char rohstoff : item.toCharArray()){
-                hashMap.put(rohstoff, (hashMap.get(rohstoff) == null) ? 1 : (hashMap.get(rohstoff) + 1));
+                // Überprüfe ob der rohstoff schon in rohstoffAnzahl als key existiert, falls ja +1
+                rohstoffAnzahl.put(rohstoff, (rohstoffAnzahl.get(rohstoff) == null) ? 1 : (rohstoffAnzahl.get(rohstoff) + 1));
             }
         }
-        IO.show(hashMap.toString());
+        IO.show(rohstoffAnzahl.toString());
     }
 
     /**
