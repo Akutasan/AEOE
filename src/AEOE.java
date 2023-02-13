@@ -14,7 +14,7 @@ public class AEOE {
                 hashMap.put(rohstoff, (hashMap.get(rohstoff) == null) ? 1 : (hashMap.get(rohstoff) + 1));
             }
         }
-        System.out.println(hashMap);
+        IO.show(hashMap.toString());
     }
 
     /**
