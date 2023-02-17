@@ -9,7 +9,7 @@
 import java.io.*;
 import java.util.ArrayList;
 
-public class EinlesenDemo {
+public class Einlesen {
     public static ArrayList<String> liste = new ArrayList<>();
 
     /**
@@ -28,11 +28,11 @@ public class EinlesenDemo {
         //Sollte ein Fehler auftreten (z. B. Datei existiert nicht, fehlende Leseberechtigung, etc.) wird der Fehler im catch-Block aufgefangen.
         try {
             //Erstellen eines Objektes "in" für das Einlesen: Öffnen der Datei mit dem übergebenen Dateinamen
-            // Creating an object of BufferedReader class
             BufferedReader br = new BufferedReader(new FileReader(dateiname));
 
             String st;
 
+            // Füge in ArrayList zu
             while ((st = br.readLine()) != null)
                 liste.add(st);
         }

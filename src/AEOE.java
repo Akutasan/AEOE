@@ -2,8 +2,8 @@ import java.util.*;
 
 public class AEOE {
     public static void main(String[] args) {
-        EinlesenDemo.einlesenAusgeben("src\\docs\\PlanetA-Q1_6x13.txt");
-        AusgabeFenster.Z1(ziel2_aufgabe3(EinlesenDemo.liste));
+        Einlesen.einlesenAusgeben("src\\docs\\PlanetA-Q1_6x13.txt");
+        AusgabeFenster.Z1(ziel2_aufgabe3(Einlesen.liste));
     }
 
     /**
