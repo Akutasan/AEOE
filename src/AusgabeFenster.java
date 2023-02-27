@@ -2,10 +2,7 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.IntStream;
 
 
 /**
@@ -66,7 +63,7 @@ public class AusgabeFenster {
 
         html += "<h2>Auswertung... [Abgeschlossen]</h2>";
 
-        int totalProzent = (int) (rohstoffMap.get('t')-rohstoffMap.get('x') / rohstoffMap.get('t') * 100.00);
+        double totalProzent = (double) Math.round(100.00 * (rohstoffMap.get('t') - rohstoffMap.get('x')) / rohstoffMap.get('t'));
 
         if (totalProzent <= 5){
             html += "0-5% Der Planet verfügt über (nahezu) keine Bodenschätze. \n⭐\n";
