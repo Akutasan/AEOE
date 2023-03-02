@@ -8,10 +8,7 @@
 
 import org.intellij.lang.annotations.Language;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class MySQL {
 
@@ -33,6 +30,7 @@ public class MySQL {
     public static Object getObject(String whereresult, String where, String select, String database) {
         ResultSet rs = getResult("SELECT " + select + " FROM " + database + " WHERE " + where + "='" + whereresult + "'");
         try {
+            assert rs != null;
             if (rs.next()) {
                 return rs.getObject(select);
             }
@@ -47,12 +45,11 @@ public class MySQL {
     public static void connect() {
         if (!isConnected()) {
             try {
-                con = DriverManager.getConnection("jdbc:mysql://" + host + ":3306/" + database + "?autoReconnect=true",
-                        username, password);
-                System.out.println("Successfully connected to MySQL-Database.");
+                con = DriverManager.getConnection("jdbc:mysql://"+host+"/"+ database, username, password);
+                System.out.println("Success!");
             } catch (SQLException e) {
                 e.printStackTrace();
-                System.out.println("Error while connecting to MySQL-Database!");
+                System.out.println("Error!");
             }
         }
     }

@@ -31,32 +31,37 @@ public class AusgabeFenster {
                 + "<h2>Scan... [abgeschlossen]</h2>"
                 + "<h2>Auswertung des Planeten...</h2>"
                 + "<p>- Quadranten-Größe... [" + (rohstoffMap.get('t')) + " Felder]";
-        
+
         //Anzeige der gefundenen Mengen
         //Berechnug des jeweiligen Gesamtansteils durch Operation getPercentage
         if (rohstoffMap.get('g') != null) {
             html = html + "<p>- Gold........................... [" + rohstoffMap.get('g') + "] (" + getPercentage(rohstoffMap, 'g') + ")";
         } else {
+            rohstoffMap.put('g', 0);
             html = html + "<p>- Gold........................... [keine Daten]";
         }
         if (rohstoffMap.get('k') != null) {
             html += "<p>- Kupfer....................... [" + rohstoffMap.get('k') + "] (" + getPercentage(rohstoffMap, 'k') + ")";
         } else {
+            rohstoffMap.put('k', 0);
             html += "<p>- Kupfer....................... [keine Daten]";
         }
         if (rohstoffMap.get('s') != null) {
             html += "<p>- Silber......................... [" + rohstoffMap.get('s') + "] (" + getPercentage(rohstoffMap, 's') + ")";
         } else {
+            rohstoffMap.put('s', 0);
             html = html + "<p>- Silber......................... [keine Daten]";
         }
         if (rohstoffMap.get('u') != null) {
             html += "<p>- Uran........................... [" + rohstoffMap.get('u') + "] (" + getPercentage(rohstoffMap, 'u') + ")";
         } else {
+            rohstoffMap.put('u', 0);
             html += "<p>- Uran........................... [keine Daten]";
         }
         if (rohstoffMap.get('z') != null) {
             html += "<p>- Zink............................ [" + rohstoffMap.get('z') + "] (" + getPercentage(rohstoffMap, 'z') + ")";
         } else {
+            rohstoffMap.put('z', 0);
             html += "<p>- Zink............................ [keine Daten]";
         }
 
@@ -64,8 +69,8 @@ public class AusgabeFenster {
 
         //Berechnung des Anteils von Bodenschätzen am Quadranten
         double totalProzent = (double) Math.round(100.00 * (rohstoffMap.get('t') - rohstoffMap.get('x')) / rohstoffMap.get('t'));
-        int sterne = 0;
-    
+        int sterne;
+
         //Bestimmung und Anzeige der Gesamtbewertung des Quadranten
         if (totalProzent <= 5) {
             html += "0-5% Der Planet verfügt über (nahezu) keine Bodenschätze. \n⭐\n";
@@ -88,6 +93,7 @@ public class AusgabeFenster {
 
         JOptionPane.showMessageDialog(null, html, "Ziel 2 - Exoplaneten Scan", JOptionPane.INFORMATION_MESSAGE, icon);
     }
+
     //Verbindung zur Datenbank wird hergestellt
     static void databaseConnection(HashMap<Character, Integer> rohstoffMap, int sterne) {
         if (!MySQL.isConnected()) {
@@ -96,16 +102,17 @@ public class AusgabeFenster {
         setRohstoffinDB(rohstoffMap, sterne);
         MySQL.close();
     }
-    
+
     //Erfassung der Namen und Rostoffwerte, einzelnes Einfügen dieser in Datenbanken
     static void setRohstoffinDB(HashMap<Character, Integer> rohstoffMap, int sterne){
-        char planetName = Einlesen.dataName.charAt(6);
-        char quadrant = Einlesen.dataName.charAt(9);
-        MySQL.update("INSERT INTO Planet(Name) VALUES(" + planetName); //Einfügen in Datenbank Planet
-        MySQL.update("INSERT INTO Quadrant(Bezeichnung, Gold, Silber, Uran, Kupfer, Zink, Total, Sterne, PName) " + //Einfügen in Datenbank Quadrant
-                "VALUES("+ quadrant + "," + rohstoffMap.get('g') + "," + rohstoffMap.get('s') + "," +
-                rohstoffMap.get('u') + "," + rohstoffMap.get('k') + "," + rohstoffMap.get('z') + "," +
-                rohstoffMap.get('t') + "," + sterne + "," + planetName);
+        String fullName = Einlesen.dataName.replace("src\\docs\\", "");
+        char planetName = fullName.charAt(6);
+        char quadrant = fullName.charAt(9);
+        MySQL.update("INSERT INTO Planet(Name) VALUES('" + planetName + "');");
+        MySQL.update("INSERT INTO Quadrant(Bezeichnung, Gold, Silber, Uran, Kupfer, Zink, Total, Sterne, PName) " +
+                "VALUES('"+ quadrant + "','" + rohstoffMap.get('g') + "','" + rohstoffMap.get('s') + "','" +
+                rohstoffMap.get('u') + "','" + rohstoffMap.get('k') + "','" + rohstoffMap.get('z') + "','" +
+                rohstoffMap.get('t') + "','" + sterne + "','" + planetName + "');");
     }
 
     //Hilfsoperation zur Berechnung des Anteils eines Rohstoffs am Gesamtquadranten
