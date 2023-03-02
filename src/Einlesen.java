@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class Einlesen {
     public static ArrayList<String> liste = new ArrayList<>();
+    public static String dataName;
 
     /**
      * /**
@@ -35,6 +36,7 @@ public class Einlesen {
             // Füge in ArrayList zu
             while ((st = br.readLine()) != null)
                 liste.add(st);
+            dataName = dateiname;
         }
 
         //Fehlerbehandlung
