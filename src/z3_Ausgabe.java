@@ -27,7 +27,7 @@ public class z3_Ausgabe {
             UI.put("OptionPane.background", new Color(31, 99, 151));
             UI.put("Panel.background", new Color(19, 60, 91));
 
-            databaseConnection(Planet);
+            System.out.println(databaseConnection(Planet));
 
             //Ausgabetext fürs Panel
             String html = "<html><body width='%1s'><h1>Abschlussbericht des ExoProjekts</h1>"
@@ -51,11 +51,12 @@ public class z3_Ausgabe {
     }
 
     //Verbindung zur Datenbank wird hergestellt
-    static void databaseConnection(String planet) {
+    static Object databaseConnection(String planet) {
         if (!MySQL.isConnected()) {
             MySQL.connect();
         }
-        MySQL.getObject(planet, "Name", "Planet", "*");
+        Object returnValue = MySQL.getObject(planet, "Name", "*", "Planet");
         MySQL.close();
+        return returnValue;
     }
 }

@@ -28,7 +28,7 @@ public class MySQL {
      */
 
     public static Object getObject(String whereresult, String where, String select, String database) {
-        ResultSet rs = getResult("SELECT " + select + " FROM " + database + " WHERE " + where + "='" + whereresult + "'");
+        ResultSet rs = getResult("SELECT " + select + " FROM " + database + " WHERE " + where + "='" + whereresult + "';");
         try {
             assert rs != null;
             if (rs.next()) {
