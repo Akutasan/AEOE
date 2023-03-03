@@ -73,19 +73,19 @@ public class AusgabeFenster {
 
         //Bestimmung und Anzeige der Gesamtbewertung des Quadranten
         if (totalProzent <= 5) {
-            html += "0-5% Der Planet verfügt über (nahezu) keine Bodenschätze. \n⭐\n";
+            html += "0-5% Der Quadrant verfügt über (nahezu) keine Bodenschätze. \n⭐\n";
             sterne = 1;
         } else if (totalProzent <= 10) {
-            html += "6-10% Der Planet verfügt über eine geringe Menge an Bodenschätzen. \n⭐⭐\n";
+            html += "6-10% Der Quadrant verfügt über eine geringe Menge an Bodenschätzen. \n⭐⭐\n";
             sterne = 2;
         } else if (totalProzent <= 15) {
-            html += "11-15% Der Planet verfügt über eine große Menge an Bodenschätzen. \n⭐⭐⭐\n";
+            html += "11-15% Der Quadrant verfügt über eine große Menge an Bodenschätzen. \n⭐⭐⭐\n";
             sterne = 3;
         } else if (totalProzent <= 20) {
-            html += "16-20% Der Planet verfügt über eine sehr große Menge an Bodenschätzen. \n⭐⭐⭐⭐\n";
+            html += "16-20% Der Quadrant verfügt über eine sehr große Menge an Bodenschätzen. \n⭐⭐⭐⭐\n";
             sterne = 4;
         } else {
-            html += ">20% Der Planet verfügt über eine extrem große Menge an Bodenschätzen. \n⭐⭐⭐⭐⭐\n";
+            html += ">20% Der Quadrant verfügt über eine extrem große Menge an Bodenschätzen. \n⭐⭐⭐⭐⭐\n";
             sterne = 5;
         }
 
