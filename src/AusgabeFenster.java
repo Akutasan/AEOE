@@ -107,8 +107,12 @@ public class AusgabeFenster {
     static void setRohstoffinDB(HashMap<Character, Integer> rohstoffMap, int sterne){
         String fullName = Einlesen.dataName.replace("src\\docs\\", "");
         char planetName = fullName.charAt(6);
-        char quadrant = fullName.charAt(9);
-        MySQL.update("INSERT INTO Planet(Name) VALUES('" + planetName + "');");
+        String quadrant = fullName.split("-")[1].split("_")[0].replace("Q","");
+
+        if (!MySQL.doesPlanetExist(planetName)) {
+            MySQL.update("INSERT INTO Planet(Name) VALUES('" + planetName + "');");
+        }
+
         MySQL.update("INSERT INTO Quadrant(Bezeichnung, Gold, Silber, Uran, Kupfer, Zink, Total, Sterne, PName) " +
                 "VALUES('"+ quadrant + "','" + rohstoffMap.get('g') + "','" + rohstoffMap.get('s') + "','" +
                 rohstoffMap.get('u') + "','" + rohstoffMap.get('k') + "','" + rohstoffMap.get('z') + "','" +

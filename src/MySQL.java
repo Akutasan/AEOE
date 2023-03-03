@@ -27,6 +27,46 @@ public class MySQL {
      * @return Verbindung zur Datenbank
      */
 
+    public static String[] getAllQuadrantsBezeichnung(String planetName) {
+        ResultSet rs = getResult("SELECT Bezeichnung FROM Quadrant WHERE PName ='" + planetName + "';");
+        try {
+            if (rs != null && rs.next()) {
+                int columnCount = rs.getMetaData().getColumnCount();
+                String[] values = new String[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    values[i - 1] = rs.getString(i);
+                }
+                return values;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new String[]{};
+        }
+
+        return new String[]{};
+    }
+
+    public static String[] getAllDataFromQuadrants(String planetName, String Quadrant) {
+        ResultSet rs = getResult("SELECT * FROM Quadrant WHERE PName ='" + planetName + "' AND Bezeichnung = '" + Quadrant + "';");
+        try {
+            assert rs != null;
+            if (rs.next()) {
+                int columnCount = rs.getMetaData().getColumnCount();
+                String[] values = new String[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    values[i - 1] = rs.getString(i);
+                }
+                return values;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new String[]{};
+        }
+        return new String[]{};
+    }
+
+
+
     public static Object getObject(String whereresult, String where, String select, String database) {
         ResultSet rs = getResult("SELECT " + select + " FROM " + database + " WHERE " + where + "='" + whereresult + "';");
         try {
@@ -42,10 +82,31 @@ public class MySQL {
         return "ERROR";
     }
 
+    public static void main(String[] args) {
+        System.out.println(doesPlanetExist('B'));
+    }
+
+    public static boolean doesPlanetExist(char planetName) {
+        ResultSet rs = getResult("SELECT Bezeichnung FROM Quadrant WHERE PName = '"+planetName+"';");
+        try {
+            if (rs != null) {
+                if (rs.next()){
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
     public static void connect() {
         if (!isConnected()) {
             try {
-                con = DriverManager.getConnection("jdbc:mysql://"+host+"/"+ database, username, password);
+                con = DriverManager.getConnection("jdbc:mysql://" + host + "/" + database, username, password);
                 System.out.println("Success!");
             } catch (SQLException e) {
                 e.printStackTrace();

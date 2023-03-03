@@ -70,7 +70,7 @@ public class AEOE {
         }
     }
 
-    private static void z3_abbruch() {
+    public static void z3_abbruch() {
         {
             //Farbschema/Panel
             UIManager UI = new UIManager();
