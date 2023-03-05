@@ -1,47 +1,35 @@
-/**
- * Klasse zur Demonstration der Arbeit mit Textdateien
- *
- * @author Sven Dräger
- * @version 05.01.2023
- */
-//Importieren einer Klasse mit Methoden zur Datei-Bearbeitung
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Einlesen {
+    // Globale Variablen für übergreifendes späteres Einlesen
     public static ArrayList<String> liste = new ArrayList<>();
     public static String dataName;
 
     /**
-     * /**
-     * Die Operation demonstriert das zeilenweise Einlesen einer Datei Testdatei.txt.
-     * Die eingelesenen Zeilen werden in der Demo direkt auf dem Bildschirm ausgegeben.
-     * Es ist bekannt, dass die Testdatei 6 Zeilen enthält.
+     * Liest eine Datei mit dem übergebenen Dateinamen ein und fügt die einzelnen Zeilen der Datei einer ArrayList hinzu.
      *
-     * @param dateiname Name der einzulesenden und auszugebenden Datei als Zeichenkette, also z. B. "Testdatei.txt"
+     * @param dateiname der Name der Datei, die eingelesen werden soll
      */
     static void einlesenAusgeben(String dateiname) {
-
-        //Da bei der Arbeit mit Dateien vielfältige Fehler auftreten können, muss eine sogenannte "Fehlerbehandlung" erfolgen.
-        //Dies wird in Java mit einer try-catch-Struktur (Fachbegriff: Exception) umgesetzt.
-        //Wenn möglich wird der try-Block ausgeführt.
-        //Sollte ein Fehler auftreten (z. B. Datei existiert nicht, fehlende Leseberechtigung, etc.) wird der Fehler im catch-Block aufgefangen.
         try {
-            //Erstellen eines Objektes "in" für das Einlesen: Öffnen der Datei mit dem übergebenen Dateinamen
             BufferedReader br = new BufferedReader(new FileReader(dateiname));
 
             String st;
 
-            // Füge in ArrayList zu
+            // Füge jede Zeile der Datei zur Liste hinzu
             while ((st = br.readLine()) != null)
                 liste.add(st);
+
+            // Speichere den Dateinamen
             dataName = dateiname;
         }
 
-        //Fehlerbehandlung
-        catch (IOException ioex) {
-            IO.show("Lesefehler: " + ioex);
+        // Fehlerbehandlung
+        catch (IOException ioException) {
+            ioException.printStackTrace();
         }
     }
 }

@@ -1,40 +1,29 @@
-//Importanweisung
-
 import javax.swing.*;
-import java.awt.*;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 
 
-/**
- * Beschreiben Sie hier die Klasse IOexperiment.
- *
- * @author (Ihr Name)
- * @version (eine Versionsnummer oder ein Datum)
- */
 public class AusgabeFenster {
+
     /**
-     * Methode zur Ausgabe. Konfiguriert ein Fenster und gibt alle Daten aus.
+     * Methode zur Ausgabe. Konfiguriert ein Fenster und gibt alle Daten aus. Holt sich Daten aus HashMap-Parameter.
      *
      * @param rohstoffMap HashMap mit allen Daten. Key: Character Rohstoff, Value: Gefundene Menge des Rohstoffs
      */
     static void Z1(HashMap<Character, Integer> rohstoffMap) {
-        //Farbschema/Panel
-        UIManager.put("OptionPane.messageForeground", Color.white);
-        UIManager.put("Panel.background", Color.white);
-        UIManager.put("OptionPane.background", new Color(31, 99, 151));
-        UIManager.put("Panel.background", new Color(19, 60, 91));
-        //Anzeige Bild
+        // Erstellt Fenster
+        AEOE.createUI();
+
+        // Bereitet Bild vor
         final ImageIcon icon = new ImageIcon("src\\img\\erzprobescan.gif");
 
-        //Ausgabetext fürs Panel
+        // Ausgabetext für das Panel
         String html = "<html><body width='%1s'><h1>EXO...projekt...</h1>"
                 + "<h2>Scan... [abgeschlossen]</h2>"
                 + "<h2>Auswertung des Planeten...</h2>"
                 + "<p>- Quadranten-Größe... [" + (rohstoffMap.get('t')) + " Felder]";
 
-        //Anzeige der gefundenen Mengen
-        //Berechnug des jeweiligen Gesamtansteils durch Operation getPercentage
+        // Anzeige der gefundenen Mengen
+        // Berechnung des jeweiligen Gesamtanteils durch Operation getPercentage (unten)
         if (rohstoffMap.get('g') != null) {
             html = html + "<p>- Gold........................... [" + rohstoffMap.get('g') + "] (" + getPercentage(rohstoffMap, 'g') + ")";
         } else {
@@ -65,16 +54,19 @@ public class AusgabeFenster {
             rohstoffMap.put('z', 0);
             html += "<p>- Zink............................ [keine Daten]";
         }
-        double totalProzent = (double) Math.round(100.00 * (rohstoffMap.get('t') - rohstoffMap.get('x')) / rohstoffMap.get('t'));
-        int totalOhneX = rohstoffMap.get('t') - rohstoffMap.get('x');
-        html += "<p>- Totale Erze............... [" + totalOhneX + "] (" + Math.round(100.00 * totalOhneX / rohstoffMap.get('t')) + "%" + ")";
 
+        // Gesamte Nummer von Erzen (Ohne 'x')
+        int totalOhneX = rohstoffMap.get('t') - rohstoffMap.get('x');
+
+        // Variable zur Totalen Prozentanzahl
+        double totalProzent = (double) Math.round(100.00 * (totalOhneX) / rohstoffMap.get('t'));
+
+        // Fügt die Totalen Erze zur Ausgabe hinzu
+        html += "<p>- Totale Erze............... [" + totalOhneX + "] (" + Math.round(100.00 * totalOhneX / rohstoffMap.get('t')) + "%" + ")";
         html += "<h2>Auswertung... [Abgeschlossen]</h2>";
 
-        //Berechnung des Anteils von Bodenschätzen am Quadranten
-        int sterne;
-
         //Bestimmung und Anzeige der Gesamtbewertung des Quadranten
+        int sterne;
         if (totalProzent <= 5) {
             html += "0-5% Der Quadrant verfügt über (nahezu) keine Bodenschätze. \n⭐\n";
             sterne = 1;
@@ -92,32 +84,52 @@ public class AusgabeFenster {
             sterne = 5;
         }
 
+        // Methode zum Verbinden der Datenbank und einfügen
         databaseConnection(rohstoffMap, sterne);
 
+        // Zeige das Fenster an
         JOptionPane.showMessageDialog(null, html, "Ziel 2 - Exoplaneten Scan", JOptionPane.INFORMATION_MESSAGE, icon);
     }
 
-    //Verbindung zur Datenbank wird hergestellt
-    //Erfassung der Namen und Rostoffwerte, einzelnes Einfügen dieser in Datenbanken
+    /**
+     * Stellt eine Verbindung zur Datenbank her und fügt Daten zur Tabelle Planet und Quadrant hinzu
+     *
+     * @param rohstoffMap HashMap mit allen Daten. Key: Character Rohstoff, Value: Gefundene Menge des Rohstoffs
+     * @param sterne      Anzahl der Bewertungssterne
+     */
     static void databaseConnection(HashMap<Character, Integer> rohstoffMap, int sterne) {
+        // Prüfen, ob eine Verbindung zur Datenbank besteht, wenn nicht, dann eine herstellen
         if (!MySQL.isConnected()) {
             MySQL.connect();
         }
+
+        // Hole Planetennamens aus dem Dateinamen
         String fullName = Einlesen.dataName.replace("src\\docs\\", "");
         char planetName = fullName.charAt(6);
+
+        // Hole Quadrantbezeichnung aus dem Dateinamen
         String quadrant = fullName.split("-")[1].split("_")[0].replace("Q", "");
 
+        // Einfügen des Planetennamens in die Tabelle "Planet"
         MySQL.update("INSERT INTO Planet SET Name='" + planetName + "';");
 
-
+        // Einfügen von Daten in die Tabelle "Quadrant"
         MySQL.update("REPLACE INTO Quadrant(Bezeichnung, Gold, Silber, Uran, Kupfer, Zink, Total, Sterne, PName) " +
                 "VALUES('" + quadrant + "','" + rohstoffMap.get('g') + "','" + rohstoffMap.get('s') + "','" +
                 rohstoffMap.get('u') + "','" + rohstoffMap.get('k') + "','" + rohstoffMap.get('z') + "','" +
                 rohstoffMap.get('t') + "','" + sterne + "','" + planetName + "');");
+
+        // Schließen der Datenbankverbindung
         MySQL.close();
     }
 
-    //Hilfsoperation zur Berechnung des Anteils eines Rohstoffs am Gesamtquadranten
+    /**
+     * Gibt den prozentualen Anteil eines bestimmten Rohstoffs an der Gesamtmenge zurück.
+     *
+     * @param rohstoffMap HashMap mit allen Daten. Key: Character Rohstoff, Value: Gefundene Menge des Rohstoffs
+     * @param erz         Rohstoffs dessen prozentualer Anteil berechnet werden soll
+     * @return prozentualer Anteil des angegebenen Rohstoffs von Gesamtmenge als String
+     */
     static String getPercentage(HashMap<Character, Integer> rohstoffMap, char erz) {
         return Math.round(100.00 * rohstoffMap.get(erz) / rohstoffMap.get('t')) + "%";
     }
