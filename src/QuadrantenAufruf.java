@@ -3,6 +3,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Beschreiben Sie hier die Klasse jksydkfgiiuzacsfhlk.
@@ -13,31 +14,35 @@ import java.util.HashMap;
 public class QuadrantenAufruf {
 
     public static void main(String[] args) {
-//        PlanetenAuswahl("B");
+        PlanetenAuswahl();
+    }
+
+    public static void createUI() {
+        //Farbschema/Panel
+        UIManager.put("OptionPane.messageForeground", Color.white);
+        UIManager.put("Panel.background", Color.white);
+        UIManager.put("OptionPane.background", new java.awt.Color(10, 80, 40));
+        UIManager.put("Panel.background", new java.awt.Color(10, 50, 40));
     }
 
     public static void PlanetenAuswahl() {
-        //pullrequest für Planeten Namen aus Datenbank
-
+        if (!MySQL.isConnected()) {
+            MySQL.connect();
+        }
         //String für die Dropdown Liste anpassen
-        String[] DBplanet = {"2"};//eretze durch DB String pull Planeten Namen
+        String[] DBplanet = MySQL.getAllPlanets();//eretze durch DB String pull Planeten Namen
+        MySQL.close();
 
-        UIManager UI = new UIManager();
-        //Farbschema/Panel
-        UI.put("OptionPane.messageForeground", Color.white);
-        UI.put("Panel.background", Color.white);
-        UI.put("OptionPane.background", new java.awt.Color(31, 99, 151));
-        UI.put("Panel.background", new java.awt.Color(19, 60, 91));
+        createUI();
         if (DBplanet.length == 0) {
-            //WAs wenn keine Planeten
 
             //Anzeige Bild
-            final ImageIcon icon = new ImageIcon("./Z-Bilder/abbruch.gif");
+            final ImageIcon icon = new ImageIcon("src\\img\\abbruch.gif");
 
             //Ausgabetext fürs Panel
             String html = "<html><body width='%1s'><h1>EXO...projekt...[F3HL3R!!!]</h1>"
                     + "<h2>keine Planeten zur verfügung...</h2>"
-                    + "<p>- Bitte erfassen Sie erst einen Planeten in der Datenbank...";
+                    + "<p>- Bitte erfassen Sie erst einen Planeten in der Datenbank... (AEOE.java)";
 
             //Weite
             int w = 500;
@@ -65,38 +70,38 @@ public class QuadrantenAufruf {
     // Instanzvariablen - ersetzen Sie das folgende Beispiel mit Ihren Variablen
     /*private*/
     static void Z3(String Planet) {
-        {
-            //Variablen
-            int menge = 3;
+        //Farbschema/Panel
+        createUI();
 
-            //Farbschema/Panel
-            UIManager UI = new UIManager();
-            UI.put("OptionPane.messageForeground", Color.white);
-            UI.put("Panel.background", Color.white);
-            UI.put("OptionPane.background", new Color(31, 99, 151));
-            UI.put("Panel.background", new Color(19, 60, 91));
+        HashMap<String, String> planetsArray = databaseConnection(Planet);
 
-            System.out.println(databaseConnection(Planet));
-
-            //Ausgabetext fürs Panel
-            String html = "<html><body width='%1s'><h1>Abschlussbericht des ExoProjekts</h1>"
-                    + "Planet: " + Planet + "<h2></h2>"
-                    //erstellen einer Tabelle für eine übersichtliche Ausgabe
-                    + "<table>"
-                    + "<tr><td>QuadrantenName</td><td>Gold</td><td>Silber</td><td>Uran</td><td>Kupfer</td><td>Zink</td><td>Total</td><td>Bewertung</td></tr>";
-            //Dateien werden in die Tabelle eingetragen
-            for (int i = 0; i < menge; i++) {
-                //Spalten für jeden Quadranten ausfüllen
-                html = html + "<tr><td>" + "Name" + "</td><td>" + "Goldwert" + "</td><td>" + "Silberwert" + "</td><td>" + "Uranwert" + "</td><td>" + "Kupferwert" + "</td><td>" + "Zinkwert" + "</td><td>" + "Totalwert" + "</td><td>" + "Bewertungswert" + "</td></tr>";
+        //Ausgabetext fürs Panel
+        StringBuilder html = new StringBuilder("<html><body width='%1s'><h1>Abschlussbericht des ExoProjekts</h1>"
+                + "Planet: " + Planet + "<h2></h2>"
+                //erstellen einer Tabelle für eine übersichtliche Ausgabe
+                + "<table>"
+                + "<tr><th>Quadrant</th><th>Gold</th><th>Silber</th><th>Uran</th><th>Kupfer</th><th>Zink</th><th>Total</th><th>Bewertung</th></tr></b>");
+        //Dateien werden in die Tabelle eingetragen
+        for (Map.Entry<String, String> item : planetsArray.entrySet()) {
+            String[] tempSplit = item.toString().split("=");
+            String[] tempNummern = tempSplit[1].replace("[", "").replace("]", "").split(",");
+            html.append("<tr>").append("<td>").append(tempSplit[0]).append("</td>");
+            for (int i = 0; i < tempNummern.length - 2; i++) {
+                html.append("<td>");
+                html.append(tempNummern[i]);
+                html.append("</td>");
             }
-
-            html = html + "</table>";
-
-            //Weite
-            int w = 500;
-
-            JOptionPane.showMessageDialog(null, String.format(html, w, w), "Ziel 3 - ExoDatenbank", JOptionPane.INFORMATION_MESSAGE, null);
+            //Spalten für jeden Quadranten ausfüllen
+            html.append("<td>");
+            html.append(tempNummern[6]).append("/5 Sternen</td></tr>");
         }
+
+        html.append("</table>");
+
+        //Weite
+        int w = 500;
+
+        JOptionPane.showMessageDialog(null, String.format(html.toString(), w, w), "Ziel 3 - ExoDatenbank", JOptionPane.INFORMATION_MESSAGE, null);
     }
 
     //Verbindung zur Datenbank wird hergestellt
@@ -107,11 +112,9 @@ public class QuadrantenAufruf {
         HashMap<String, String> returnMap = new HashMap<>();
 
         String[] allQuadrantsBezeichnung = MySQL.getAllQuadrantsBezeichnung(planet);
-        if (allQuadrantsBezeichnung.length != 0) {
-            for (String item : allQuadrantsBezeichnung) {
-                ArrayList<String> list = new ArrayList<>(Arrays.asList(MySQL.getAllDataFromQuadrants(planet, item)));
-                returnMap.put(list.get(0), String.valueOf(list.subList(1, list.size())));
-            }
+        for (String item : allQuadrantsBezeichnung) {
+            ArrayList<String> list = new ArrayList<>(Arrays.asList(MySQL.getAllDataFromQuadrants(planet, item)));
+            returnMap.put(list.get(0), String.valueOf(list.subList(1, list.size())));
         }
         MySQL.close();
         return returnMap;

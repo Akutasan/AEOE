@@ -2,6 +2,7 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 
 
@@ -64,11 +65,13 @@ public class AusgabeFenster {
             rohstoffMap.put('z', 0);
             html += "<p>- Zink............................ [keine Daten]";
         }
+        double totalProzent = (double) Math.round(100.00 * (rohstoffMap.get('t') - rohstoffMap.get('x')) / rohstoffMap.get('t'));
+        int totalOhneX = rohstoffMap.get('t') - rohstoffMap.get('x');
+        html += "<p>- Totale Erze............... [" + totalOhneX + "] (" + Math.round(100.00 * totalOhneX / rohstoffMap.get('t')) + "%" + ")";
 
         html += "<h2>Auswertung... [Abgeschlossen]</h2>";
 
         //Berechnung des Anteils von Bodenschätzen am Quadranten
-        double totalProzent = (double) Math.round(100.00 * (rohstoffMap.get('t') - rohstoffMap.get('x')) / rohstoffMap.get('t'));
         int sterne;
 
         //Bestimmung und Anzeige der Gesamtbewertung des Quadranten
@@ -95,28 +98,23 @@ public class AusgabeFenster {
     }
 
     //Verbindung zur Datenbank wird hergestellt
+    //Erfassung der Namen und Rostoffwerte, einzelnes Einfügen dieser in Datenbanken
     static void databaseConnection(HashMap<Character, Integer> rohstoffMap, int sterne) {
         if (!MySQL.isConnected()) {
             MySQL.connect();
         }
-        setRohstoffinDB(rohstoffMap, sterne);
-        MySQL.close();
-    }
-
-    //Erfassung der Namen und Rostoffwerte, einzelnes Einfügen dieser in Datenbanken
-    static void setRohstoffinDB(HashMap<Character, Integer> rohstoffMap, int sterne){
         String fullName = Einlesen.dataName.replace("src\\docs\\", "");
         char planetName = fullName.charAt(6);
-        String quadrant = fullName.split("-")[1].split("_")[0].replace("Q","");
+        String quadrant = fullName.split("-")[1].split("_")[0].replace("Q", "");
 
-        if (!MySQL.doesPlanetExist(planetName)) {
-            MySQL.update("INSERT INTO Planet(Name) VALUES('" + planetName + "');");
-        }
+        MySQL.update("INSERT INTO Planet SET Name='" + planetName + "';");
 
-        MySQL.update("INSERT INTO Quadrant(Bezeichnung, Gold, Silber, Uran, Kupfer, Zink, Total, Sterne, PName) " +
-                "VALUES('"+ quadrant + "','" + rohstoffMap.get('g') + "','" + rohstoffMap.get('s') + "','" +
+
+        MySQL.update("REPLACE INTO Quadrant(Bezeichnung, Gold, Silber, Uran, Kupfer, Zink, Total, Sterne, PName) " +
+                "VALUES('" + quadrant + "','" + rohstoffMap.get('g') + "','" + rohstoffMap.get('s') + "','" +
                 rohstoffMap.get('u') + "','" + rohstoffMap.get('k') + "','" + rohstoffMap.get('z') + "','" +
                 rohstoffMap.get('t') + "','" + sterne + "','" + planetName + "');");
+        MySQL.close();
     }
 
     //Hilfsoperation zur Berechnung des Anteils eines Rohstoffs am Gesamtquadranten

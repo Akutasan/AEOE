@@ -9,6 +9,8 @@
 import org.intellij.lang.annotations.Language;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MySQL {
 
@@ -28,43 +30,58 @@ public class MySQL {
      */
 
     public static String[] getAllQuadrantsBezeichnung(String planetName) {
-        ResultSet rs = getResult("SELECT Bezeichnung FROM Quadrant WHERE PName ='" + planetName + "';");
+        String sql = "SELECT * FROM Quadrant WHERE PName = ?";
         try {
-            if (rs != null && rs.next()) {
-                int columnCount = rs.getMetaData().getColumnCount();
-                String[] values = new String[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    values[i - 1] = rs.getString(i);
-                }
-                return values;
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, planetName);
+            ResultSet rs = pstmt.executeQuery();
+            List<String> bezeichnungList = new ArrayList<>();
+            while (rs.next()) {
+                bezeichnungList.add(rs.getString("Bezeichnung"));
             }
+            return bezeichnungList.toArray(new String[0]);
         } catch (SQLException e) {
             e.printStackTrace();
             return new String[]{};
         }
-
-        return new String[]{};
     }
 
-    public static String[] getAllDataFromQuadrants(String planetName, String Quadrant) {
-        ResultSet rs = getResult("SELECT * FROM Quadrant WHERE PName ='" + planetName + "' AND Bezeichnung = '" + Quadrant + "';");
+    public static String[] getAllPlanets() {
+        String sql = "SELECT Name FROM Planet";
         try {
-            assert rs != null;
-            if (rs.next()) {
-                int columnCount = rs.getMetaData().getColumnCount();
-                String[] values = new String[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    values[i - 1] = rs.getString(i);
-                }
-                return values;
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            List<String> bezeichnungList = new ArrayList<>();
+            while (rs.next()) {
+                bezeichnungList.add(rs.getString("Name"));
             }
+            return bezeichnungList.toArray(new String[0]);
         } catch (SQLException e) {
             e.printStackTrace();
             return new String[]{};
         }
-        return new String[]{};
     }
 
+    public static String[] getAllDataFromQuadrants(String planetName, String quadrant) {
+        String sql = "SELECT * FROM Quadrant WHERE PName = ? AND Bezeichnung = ?";
+        try {
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, planetName);
+            pstmt.setString(2, quadrant);
+            ResultSet rs = pstmt.executeQuery();
+            List<String> dataList = new ArrayList<>();
+            while (rs.next()) {
+                int columnCount = rs.getMetaData().getColumnCount();
+                for (int i = 1; i <= columnCount; i++) {
+                    dataList.add(rs.getString(i));
+                }
+            }
+            return dataList.toArray(new String[0]);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new String[]{};
+        }
+    }
 
 
     public static Object getObject(String whereresult, String where, String select, String database) {
@@ -82,15 +99,11 @@ public class MySQL {
         return "ERROR";
     }
 
-    public static void main(String[] args) {
-        System.out.println(doesPlanetExist('B'));
-    }
-
-    public static boolean doesPlanetExist(char planetName) {
-        ResultSet rs = getResult("SELECT Bezeichnung FROM Quadrant WHERE PName = '"+planetName+"';");
+    public static boolean doesExist(String KeyName, String KeyContent, String table) {
+        ResultSet rs = getResult("SELECT 1 FROM " + table + " WHERE " + KeyName + " = '" + KeyContent + "';");
         try {
             if (rs != null) {
-                if (rs.next()){
+                if (rs.next()) {
                     return true;
                 }
             } else {
@@ -136,8 +149,7 @@ public class MySQL {
         if (isConnected()) {
             try {
                 con.createStatement().executeUpdate(qry);
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException ignored) {
             }
         }
     }
